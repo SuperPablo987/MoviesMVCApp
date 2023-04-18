@@ -9,16 +9,22 @@ namespace MoviesData
 {
     public class MovieContext:DbContext
     {
-        public MovieContext() : base() { } // just calls the base class constructor
+        // we also comment out the default constructor because we will no longer need it with our one below (but we could leave it if we want and everything would be fine)
+        /*public MovieContext() : base() { }*/ // just calls the base class constructor
+
+        // need to add another constructor for connection string in appsettings.json
+        // this is an option of dependency injection where we have the object of class A used to create class B (which gets rid of tight coupling)
+        public MovieContext(DbContextOptions<MovieContext> options) : base(options) { }
 
         public DbSet<Movie> Movies { get; set; }
         public DbSet<Genre> Genres { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            // provide connection string
-            optionsBuilder.UseSqlServer("Server=SAIT229383;Database=Movies;Trusted_Connection=True;");
-        }
+        // we comment out this method because it is used to build the database.
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    // provide connection string
+        //    optionsBuilder.UseSqlServer("Server=SAIT229383;Database=Movies;Trusted_Connection=True;");
+        //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

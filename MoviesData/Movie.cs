@@ -24,7 +24,10 @@ namespace MoviesData
         public int? Rating { get; set; }
 
         [Required(ErrorMessage = "Please enter a genre.")]
+        [Display(Name = "Genre")]
         public string GenreId { get; set; }
-        public Genre Genre { get; set; }
+
+        // navigation property (don't get loaded unless we use "Include" method in MovieManager. We need the ? otherwise the validation will not work
+        public Genre? Genre { get; set; }
     }
 }
