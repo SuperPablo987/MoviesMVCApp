@@ -13,7 +13,7 @@ namespace MoviesData
         public int MovieId { get; set; }
 
         [Required(ErrorMessage = "Please enter a name.")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [Required(ErrorMessage = "Please enter a year.")]
         [Range(1889, 2050, ErrorMessage = "Year must be between 1889 and now.")]
@@ -25,7 +25,7 @@ namespace MoviesData
 
         [Required(ErrorMessage = "Please enter a genre.")]
         [Display(Name = "Genre")]
-        public string GenreId { get; set; }
+        public string? GenreId { get; set; }
 
         // navigation property (don't get loaded unless we use "Include" method in MovieManager. We need the ? otherwise the validation will not work
         public Genre? Genre { get; set; }
