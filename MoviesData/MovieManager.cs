@@ -40,6 +40,19 @@ namespace MoviesData
             return genres;
         }
         /// <summary>
+        /// retrieves movies of given genre ordered by name
+        /// </summary>
+        /// <param name="dB">context object</param>
+        /// <param name="genreId">given id of genre</param>
+        /// <returns>list of movies by given genre or none if null</returns>
+        public static List<Movie> GetMoviesByGenre(MovieContext dB, string genreId)
+        {
+            List<Movie> movies = dB.Movies.Where(m => m.GenreId == genreId).
+                Include(m => m.Genre).OrderBy(m => m.Name).ToList();
+
+            return movies;
+        }
+        /// <summary>
         /// get movie with given ID
         /// </summary>
         /// <param name="dB">context object</param>

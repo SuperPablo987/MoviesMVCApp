@@ -25,6 +25,49 @@ namespace MoviesMVCApp.Controllers
             return View(movies);
         }
 
+        // filter movies by genre 
+        public ActionResult FilteredList()
+        {
+            // technically we should refactor this code block because its the same for post
+            // prepare list of genres for the drop down list
+            List<Genre> genres = MovieManager.GetGenres(_context); // we pass _context here to help with dependency injection
+            var list = new SelectList(genres, "GenreId", "Name").ToList();
+            list.Insert(0, new SelectListItem("All", "All")); // add all as first option
+            ViewBag.Genres = list;
+
+            List<Movie> movies = MovieManager.GetMovies(_context); // all movies
+            return View(movies);
+        }
+        [HttpPost]
+        public ActionResult FilteredList(string id = "All")
+        {
+            // retain genres for drop down list and selected item
+            List<Genre> genres = MovieManager.GetGenres(_context); // we pass _context here to help with dependency injection
+            var list = new SelectList(genres, "GenreId", "Name").ToList();
+            list.Insert(0, new SelectListItem("All", "All")); // add all as first option
+            
+            foreach(var item in list) // find selected item
+            {
+                if (item.Value == id)
+                {
+                    item.Selected = true;
+                    break;
+                }
+            }
+            ViewBag.Genres = list;
+            List<Movie> movies;
+            if(id == "All")
+            {
+                movies = MovieManager.GetMovies(_context); // all movies
+            }
+            else // genre selected
+            {
+                movies = MovieManager.GetMoviesByGenre(_context, id);
+            }
+            return View(movies);
+
+        }
+
         // GET: MovieController/Details/5
         public ActionResult Details(int id)
         {
@@ -37,7 +80,7 @@ namespace MoviesMVCApp.Controllers
         {
             // prepare list of genres for the drop down list
             List<Genre> genres = MovieManager.GetGenres(_context); // we pass _context here to help with dependency injection
-            var list = new SelectList(genres, "GenreId", "Name").ToList();
+            var list = new SelectList(genres, "GenreId", "Name");
             ViewBag.Genres = list; // used to pass the _context to the empty movie for the list of genres
             Movie movie = new Movie(); // empty movie object
             return View(movie);
