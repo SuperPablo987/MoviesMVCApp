@@ -21,48 +21,77 @@ namespace MoviesMVCApp.Controllers
         // list of movies
         public ActionResult Index()
         {
-            List<Movie> movies = MovieManager.GetMovies(_context); // we pass _context here to help with dependency injection
+            List<Movie> movies = null;
+            try
+            {
+                movies = MovieManager.GetMovies(_context); // we pass _context here to help with dependency injection
+            }
+            catch (Exception)
+            {
+
+                TempData["Message"] = "Database connection error. Try again later.";
+                TempData["IsError"] = true;
+            }
+
             return View(movies);
         }
 
         // filter movies by genre 
         public ActionResult FilteredList()
         {
-            // technically we should refactor this code block because its the same for post
-            // prepare list of genres for the drop down list
-            List<Genre> genres = MovieManager.GetGenres(_context); // we pass _context here to help with dependency injection
-            var list = new SelectList(genres, "GenreId", "Name").ToList();
-            list.Insert(0, new SelectListItem("All", "All")); // add all as first option
-            ViewBag.Genres = list;
+            List<Movie> movies = null;
+            try
+            {
+                // technically we should refactor this code block because its the same for post
+                // prepare list of genres for the drop down list
+                List<Genre> genres = MovieManager.GetGenres(_context); // we pass _context here to help with dependency injection
+                var list = new SelectList(genres, "GenreId", "Name").ToList();
+                list.Insert(0, new SelectListItem("All", "All")); // add all as first option
+                ViewBag.Genres = list;
 
-            List<Movie> movies = MovieManager.GetMovies(_context); // all movies
+                movies = MovieManager.GetMovies(_context); // all movies
+            }
+            catch (Exception)
+            {
+                TempData["Message"] = "Database connection error. Try again later.";
+                TempData["IsError"] = true;
+            }
             return View(movies);
         }
         [HttpPost]
         public ActionResult FilteredList(string id = "All")
         {
-            // retain genres for drop down list and selected item
-            List<Genre> genres = MovieManager.GetGenres(_context); // we pass _context here to help with dependency injection
-            var list = new SelectList(genres, "GenreId", "Name").ToList();
-            list.Insert(0, new SelectListItem("All", "All")); // add all as first option
-            
-            foreach(var item in list) // find selected item
+            List<Movie> movies = null;
+            try
             {
-                if (item.Value == id)
+                // retain genres for drop down list and selected item
+                List<Genre> genres = MovieManager.GetGenres(_context); // we pass _context here to help with dependency injection
+                var list = new SelectList(genres, "GenreId", "Name").ToList();
+                list.Insert(0, new SelectListItem("All", "All")); // add all as first option
+
+                foreach (var item in list) // find selected item
                 {
-                    item.Selected = true;
-                    break;
+                    if (item.Value == id)
+                    {
+                        item.Selected = true;
+                        break;
+                    }
+                }
+                ViewBag.Genres = list;
+
+                if (id == "All")
+                {
+                    movies = MovieManager.GetMovies(_context); // all movies
+                }
+                else // genre selected
+                {
+                    movies = MovieManager.GetMoviesByGenre(_context, id);
                 }
             }
-            ViewBag.Genres = list;
-            List<Movie> movies;
-            if(id == "All")
+            catch (Exception)
             {
-                movies = MovieManager.GetMovies(_context); // all movies
-            }
-            else // genre selected
-            {
-                movies = MovieManager.GetMoviesByGenre(_context, id);
+                TempData["Message"] = "Database connection error. Try again later.";
+                TempData["IsError"] = true;
             }
             return View(movies);
 
@@ -71,8 +100,19 @@ namespace MoviesMVCApp.Controllers
         // GET: MovieController/Details/5
         public ActionResult Details(int id)
         {
-            Movie? movie = MovieManager.GetMovieByID(_context, id);
-            return View(movie);
+            try
+            {
+                Movie movie = MovieManager.GetMovieByID(_context, id);
+                return View(movie);
+            }
+            catch (Exception)
+            {
+                TempData["Message"] = "Database connection error. Try again later.";
+                TempData["IsError"] = true;
+                return View(null);
+            }
+
+
         }
 
         // GET: MovieController/Create
