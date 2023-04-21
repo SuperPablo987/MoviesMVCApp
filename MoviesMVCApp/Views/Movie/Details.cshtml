@@ -41,7 +41,10 @@
         </dd>
     </dl>
 </div>
-<div>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.MovieId }) |
-    <a asp-action="Index">Back to List</a>
-</div>
+@if (Model != null)
+{
+    <div>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.MovieId }) |
+        <a asp-action="Index">Back to List</a>
+    </div>
+}

@@ -36,10 +36,11 @@ namespace MoviesMVCApp.Controllers
             return View(movies);
         }
 
+        List<Movie> movies = null;
         // filter movies by genre 
         public ActionResult FilteredList()
         {
-            List<Movie> movies = null;
+            
             try
             {
                 // technically we should refactor this code block because its the same for post
@@ -136,6 +137,8 @@ namespace MoviesMVCApp.Controllers
                 if (ModelState.IsValid)
                 {
                     MovieManager.AddMovie(_context, newMovie);
+                    TempData["Message"] = $"Successfully added movie {newMovie.Name}";
+                    // do not set TempData["IsError"]
                     return RedirectToAction(nameof(Index));
                 }
                 else // validation errors
@@ -171,6 +174,8 @@ namespace MoviesMVCApp.Controllers
                 if (ModelState.IsValid)
                 {
                     MovieManager.UpdateMovie(_context, id, newMovie);
+                    TempData["Message"] = $"Successfully edited movie {newMovie.Name}";
+                    // do not set TempData["IsError"]
                     return RedirectToAction(nameof(Index)); 
                 }
                 else
@@ -194,11 +199,18 @@ namespace MoviesMVCApp.Controllers
         // POST: MovieController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, Movie movie)
+        public ActionResult Delete(int id, Movie movie) // there is no collection on the form
         {
             try
             {
-                MovieManager.DeleteMovie(_context, id);
+                Movie deletedMovie = MovieManager.GetMovieByID(_context, id); // preserve the movie name before deleting
+                if (deletedMovie != null)
+                {
+                    MovieManager.DeleteMovie(_context, id);
+                    TempData["Message"] = $"Successfully deleted movie {deletedMovie.Name}";
+                    // do not set TempData["IsError"]
+                }
+
                 return RedirectToAction(nameof(Index));
             }
             catch
