@@ -35,71 +35,94 @@ namespace MoviesMVCApp.Controllers
 
             return View(movies);
         }
-
-        List<Movie> movies = null;
-        // filter movies by genre 
-        public ActionResult FilteredList()
+        // filter movies by genre - we will invoke the view controller
+        public ActionResult FilterByGenre(string id = "All")
         {
-            
             try
             {
-                // technically we should refactor this code block because its the same for post
                 // prepare list of genres for the drop down list
                 List<Genre> genres = MovieManager.GetGenres(_context); // we pass _context here to help with dependency injection
                 var list = new SelectList(genres, "GenreId", "Name").ToList();
                 list.Insert(0, new SelectListItem("All", "All")); // add all as first option
                 ViewBag.Genres = list;
-
-                movies = MovieManager.GetMovies(_context); // all movies
             }
             catch (Exception)
             {
                 TempData["Message"] = "Database connection error. Try again later.";
                 TempData["IsError"] = true;
             }
-            return View(movies);
+            return View(); // Ajax function in the view calls the view component to get movies - no posting function Ajax handles that
         }
-        [HttpPost]
-        public ActionResult FilteredList(string id = "All")
+
+        // method called from Ajax - invoke view component
+        public ActionResult GetMoviesByGenre(string id) // genre ID
         {
-            List<Movie> movies = null;
-            try
-            {
-                // retain genres for drop down list and selected item
-                List<Genre> genres = MovieManager.GetGenres(_context); // we pass _context here to help with dependency injection
-                var list = new SelectList(genres, "GenreId", "Name").ToList();
-                list.Insert(0, new SelectListItem("All", "All")); // add all as first option
+            return ViewComponent("MoviesByGenre", id); // calls view component and returns its Default view
+        } 
 
-                foreach (var item in list) // find selected item
-                {
-                    if (item.Value == id)
-                    {
-                        item.Selected = true;
-                        break;
-                    }
-                }
-                ViewBag.Genres = list;
+            // filter movies by genre 
+            //public ActionResult FilteredList() // commented out to use partial view component
+            //{
+            //List<Movie> movies = null;
+            //    try
+            //    {
+            //        // technically we should refactor this code block because its the same for post
+            //        // prepare list of genres for the drop down list
+            //        List<Genre> genres = MovieManager.GetGenres(_context); // we pass _context here to help with dependency injection
+            //        var list = new SelectList(genres, "GenreId", "Name").ToList();
+            //        list.Insert(0, new SelectListItem("All", "All")); // add all as first option
+            //        ViewBag.Genres = list;
 
-                if (id == "All")
-                {
-                    movies = MovieManager.GetMovies(_context); // all movies
-                }
-                else // genre selected
-                {
-                    movies = MovieManager.GetMoviesByGenre(_context, id);
-                }
-            }
-            catch (Exception)
-            {
-                TempData["Message"] = "Database connection error. Try again later.";
-                TempData["IsError"] = true;
-            }
-            return View(movies);
+            //        movies = MovieManager.GetMovies(_context); // all movies
+            //    }
+            //    catch (Exception)
+            //    {
+            //        TempData["Message"] = "Database connection error. Try again later.";
+            //        TempData["IsError"] = true;
+            //    }
+            //    return View(movies);
+            //}
+            //[HttpPost]
+            //public ActionResult FilteredList(string id = "All")
+            //{
+            //    List<Movie> movies = null;
+            //    try
+            //    {
+            //        // retain genres for drop down list and selected item
+            //        List<Genre> genres = MovieManager.GetGenres(_context); // we pass _context here to help with dependency injection
+            //        var list = new SelectList(genres, "GenreId", "Name").ToList();
+            //        list.Insert(0, new SelectListItem("All", "All")); // add all as first option
 
-        }
+            //        foreach (var item in list) // find selected item
+            //        {
+            //            if (item.Value == id)
+            //            {
+            //                item.Selected = true;
+            //                break;
+            //            }
+            //        }
+            //        ViewBag.Genres = list;
 
-        // GET: MovieController/Details/5
-        public ActionResult Details(int id)
+            //        if (id == "All")
+            //        {
+            //            movies = MovieManager.GetMovies(_context); // all movies
+            //        }
+            //        else // genre selected
+            //        {
+            //            movies = MovieManager.GetMoviesByGenre(_context, id);
+            //        }
+            //    }
+            //    catch (Exception)
+            //    {
+            //        TempData["Message"] = "Database connection error. Try again later.";
+            //        TempData["IsError"] = true;
+            //    }
+            //    return View(movies);
+
+            //}
+
+            // GET: MovieController/Details/5
+            public ActionResult Details(int id)
         {
             try
             {

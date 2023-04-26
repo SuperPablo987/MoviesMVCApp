@@ -20,11 +20,11 @@ namespace MoviesData
         public DbSet<Genre> Genres { get; set; }
 
         // we comment out this method because it is used to build the database.
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            // provide connection string
-            optionsBuilder.UseSqlServer("Server=localhost\\sqlexpress;Database=Movies;Trusted_Connection=True;");
-        }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    // provide connection string
+        //    optionsBuilder.UseSqlServer("Server=localhost\\sqlexpress;Database=Movies;Trusted_Connection=True;");
+        //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

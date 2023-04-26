@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Movies by Genre";
+}
+
+<h1>Movies by Genre</h1>
+
+<div class="form-group">
+    <select id="uxGenres" asp-items="@ViewBag.Genres" class="form-control"></select>
+</div>
+
+<div id="uxDisplay">
+    @await Component.InvokeAsync("MoviesByGenre", "All")
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function(){
+            $("#uxGenres").change(function(){
+                var genreID = $("#uxGenres").val(); // value from select element
+                $.ajax({
+                    method:'GET',
+                    url: "/Movie/GetMoviesByGenre",
+                    data: {id:genreID}
+                }).done(function(result, statusText, xhdr){
+                    $("#uxDisplay").html(result);
+                });
+            });
+        });
+    </script>
+}

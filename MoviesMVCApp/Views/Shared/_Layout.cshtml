@@ -23,7 +23,9 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Movie" asp-action="Index">Movies</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Movie" asp-action="FilteredList">Movies by Genre</a>
+                            @*previous method that does not make use of the view component*@
+                            @*<a class="nav-link text-dark" asp-area="" asp-controller="Movie" asp-action="FilteredList">Movies by Genre</a>*@
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Movie" asp-action="FilterByGenre">Movies by Genre</a>
                         </li>
                     </ul>
                 </div>
